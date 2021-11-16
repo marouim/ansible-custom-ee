@@ -1,6 +1,6 @@
 apiVersion: 1.0.0
 metadata:
-  name: ansible-custom-ee
+  name: ansible-custom-ee9w0wd
 projects:
   - name: ansible-custom-ee
     source:
@@ -21,7 +21,6 @@ components:
         containerPath: /.kube
     alias: oc
     image: 'quay.io/openshift/origin-cli:4.8'
-
   - mountSources: true
     command:
       - tail
@@ -32,14 +31,31 @@ components:
     type: dockerimage
     alias: ansible-ee
     image: 'quay.io/mouimet/ansible-custom-ee:v4'
-
   - mountSources: true
-    command:
-      - tail
-    args:
-      - '-f'
-      - /dev/null
-    memoryLimit: 512Mi
-    type: dockerimage
-    alias: ansible-builder
-    image: 'quay.io/mouimet/ansible-builder-image'
+    referenceContent: |
+      kind: Pod
+      apiVersion: v1
+      metadata:
+        name: ansiblebuilder
+      spec:
+        containers:
+          - name: ansiblebuilder
+            command:
+              - tail
+            securityContext:
+              privileged: true
+            image: quay.io/mouimet/ansible-builder-image
+            args:
+              - '-f'
+              - /dev/null
+    type: kubernetes
+    alias: ansiblebuilder
+  - id: redhat/vscode-yaml/latest
+    type: chePlugin
+commands:
+  - name: Build Execution Environment
+    actions:
+      - workdir: '${CHE_PROJECTS_ROOT}/ansible-custom-ee'
+        type: exec
+        command: 'ansible-builder build --tag quay.io/mouimet/ansible-custom-ee:dev'
+        component: ansiblebuilder
