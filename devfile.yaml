@@ -1,6 +1,12 @@
 apiVersion: 1.0.0
 metadata:
   name: ansible-custom-ee
+projects:
+  - name: ansible-custom-ee
+    source:
+      location: 'https://github.com/marouim/ansible-custom-ee.git'
+      type: github
+      branch: master
 components:
   - mountSources: true
     command:
