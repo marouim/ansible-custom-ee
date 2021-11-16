@@ -1,0 +1,39 @@
+apiVersion: 1.0.0
+metadata:
+  name: ansible-custom-ee
+components:
+  - mountSources: true
+    command:
+      - tail
+    args:
+      - '-f'
+      - /dev/null
+    memoryLimit: 512Mi
+    type: dockerimage
+    volumes:
+      - name: kubeconfig
+        containerPath: /.kube
+    alias: oc
+    image: 'quay.io/openshift/origin-cli:4.8'
+
+  - mountSources: true
+    command:
+      - tail
+    args:
+      - '-f'
+      - /dev/null
+    memoryLimit: 512Mi
+    type: dockerimage
+    alias: ansible-ee
+    image: 'quay.io/mouimet/ansible-custom-ee:v4'
+
+  - mountSources: true
+    command:
+      - tail
+    args:
+      - '-f'
+      - /dev/null
+    memoryLimit: 512Mi
+    type: dockerimage
+    alias: ansible-builder
+    image: 'quay.io/mouimet/ansible-builder-image'
